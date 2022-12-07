@@ -58,6 +58,8 @@ type
 
 implementation
 
+uses SysUtils;
+
 procedure ReplaceFunction.dispose();
 begin
   Destroy;
@@ -71,14 +73,20 @@ end;
 procedure ReplaceFunction.Execute(status: iStatus; context: iExternalContext;
   inMsg: Pointer; outMsg: Pointer);
 var
-  xInput: IncInMessagePtr;
-  xOutput: IncOutMessagePtr;
+  xInput: ReplaceInMessagePtr;
+  xOutput: ReplaceOutMessagePtr;
+  value: string;
 begin
-  xInput := IncInMessagePtr(inMsg);
-  xOutput := IncOutMessagePtr(outMsg);
+  xInput := ReplaceInMessagePtr(inMsg);
+  xOutput := ReplaceOutMessagePtr(outMsg);
 
-  xOutput^.resultNull := xInput^.valNull;
-  xOutput^.Result := xInput^.val + 1;
+  xOutput^.ResultNull := xInput^.InputNull;
+  if not xOutput^.ResultNull then
+  begin
+    value := StringReplace(xInput^.Input.Value, xInput^.Find.Value, xInput^.Replace.Value, [rfReplaceAll]);
+    xOutput^.Result.Length := Length(value);
+    Move(value[1], xOutput^.Result.Value[0], Length(value));
+  end;
 end;
 
 
