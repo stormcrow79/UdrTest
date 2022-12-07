@@ -7,7 +7,7 @@ uses Firebird;
 function firebird_udr_plugin(status: iStatus; theirUnloadFlagLocal: BooleanPtr; udrPlugin: iUdrPlugin): BooleanPtr; cdecl;
 
 implementation
-uses UdrGenRows, UdrInc, TestTrigger;
+uses UdrGenRows, UdrInc, TestTrigger, UdrReplace;
 var
 	myUnloadFlag   : Boolean;
 	theirUnloadFlag: BooleanPtr;
@@ -15,6 +15,7 @@ function firebird_udr_plugin(status: iStatus; theirUnloadFlagLocal: BooleanPtr; 
 begin
 	udrPlugin.registerProcedure(status, 'gen_rows', GenRowsFactory.create());
   udrPlugin.registerFunction(status, 'pas_inc', IncFactory.create());
+  udrPlugin.registerFunction(status, 'replace', ReplaceFactory.create());
   udrPlugin.registerTrigger(status, 'test_trigger', TMyTriggerFactory.Create());
 	theirUnloadFlag := theirUnloadFlagLocal;
 	Result := @myUnloadFlag;
