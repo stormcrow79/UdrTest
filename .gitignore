@@ -1,0 +1,6 @@
+__history/
+bin/
+obj/
+
+*.local
+*.identcache
