@@ -1,5 +1,20 @@
 unit UdrReplace;
 
+(*
+-- TEST SQL  --
+
+create function replace(
+  input varchar(400),
+  find varchar(400),
+  replace varchar(400)
+) returns varchar(400)
+external name 'udrtest!replace'
+engine udr;
+
+select replace('12345', '3', 'ccc') from rdb$database rd;
+=> 12ccc45
+*)
+
 interface
 
 uses Firebird;
