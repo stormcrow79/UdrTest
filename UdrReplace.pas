@@ -60,17 +60,6 @@ type
       inMsg: Pointer; outMsg: Pointer); override;
   end;
 
-  ReplaceFactory = class(IUdrFunctionFactoryImpl)
-    procedure dispose(); override;
-
-    procedure setup(status: iStatus; context: iExternalContext;
-      metadata: iRoutineMetadata; inBuilder: iMetadataBuilder;
-      outBuilder: iMetadataBuilder); override;
-
-    function newItem(status: iStatus; context: iExternalContext;
-      metadata: iRoutineMetadata): IExternalFunction; override;
-  end;
-
 implementation
 
 uses SysUtils;
@@ -102,23 +91,6 @@ begin
     xOutput^.Result.Length := Length(value);
     Move(value[1], xOutput^.Result.Value[0], Length(value));
   end;
-end;
-
-
-procedure ReplaceFactory.dispose();
-begin
-  Destroy;
-end;
-
-procedure ReplaceFactory.setup(status: iStatus; context: iExternalContext;
-  metadata: iRoutineMetadata; inBuilder: iMetadataBuilder; outBuilder: iMetadataBuilder);
-begin
-end;
-
-function ReplaceFactory.newItem(status: iStatus; context: iExternalContext;
-  metadata: iRoutineMetadata): IExternalFunction;
-begin
-  Result := ReplaceFunction.Create;
 end;
 
 end.
