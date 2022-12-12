@@ -20,34 +20,21 @@ interface
 uses Firebird;
 
 type
-  ReplaceInMessage = record
-    Input: record
-      Length: Word;
-      Value: array [0 .. 399] of AnsiChar;
-    end;
-    InputNull: WordBool;
-    Find: record
-      Length: Word;
-      Value: array [0 .. 399] of AnsiChar;
-    end;
-    FindNull: WordBool;
-    Replace: record
-      Length: Word;
-      Value: array [0 .. 399] of AnsiChar;
-    end;
-    ReplaceNull: WordBool;
+  TVarChar400 = record
+    Length: Word;
+    Value: array [0 .. 399] of AnsiChar;
+    Null: WordBool;
   end;
-
+  ReplaceInMessage = record
+    Value: TVarChar400;
+    Find: TVarChar400;
+    Replace: TVarChar400;
+  end;
   ReplaceInMessagePtr = ^ReplaceInMessage;
 
   ReplaceOutMessage = record
-    Result: record
-      Length: Word;
-      Value: array [0 .. 399] of AnsiChar;
-    end;
-    ResultNull: WordBool;
+    Result: TVarChar400;
   end;
-
   ReplaceOutMessagePtr = ^ReplaceOutMessage;
 
   ReplaceFunction = class(IExternalFunctionImpl)
@@ -75,6 +62,15 @@ implementation
 
 uses SysUtils;
 
+procedure log(const message: string);
+var f: text;
+begin
+  AssignFile(f, 'c:\ccare\udr.log');
+  Append(f);
+  Writeln(f, message);
+  Close(f);
+end;
+
 procedure ReplaceFunction.dispose();
 begin
   Destroy;
@@ -95,10 +91,10 @@ begin
   xInput := ReplaceInMessagePtr(inMsg);
   xOutput := ReplaceOutMessagePtr(outMsg);
 
-  xOutput^.ResultNull := xInput^.InputNull;
-  if not xOutput^.ResultNull then
+  xOutput^.Result.Null := xInput^.Value.Null;
+  if not xOutput^.Result.Null then
   begin
-    value := StringReplace(xInput^.Input.Value, xInput^.Find.Value, xInput^.Replace.Value, [rfReplaceAll]);
+    value := StringReplace(xInput^.Value.Value, xInput^.Find.Value, xInput^.Replace.Value, [rfReplaceAll]);
     xOutput^.Result.Length := Length(value);
     Move(value[1], xOutput^.Result.Value[0], Length(value));
   end;
